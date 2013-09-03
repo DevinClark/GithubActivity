@@ -12,9 +12,14 @@ class GithubActivity {
 	function __construct($username, $number) {
 		$this->username = $username;
 		$this->numberOfItems = $number;
-		$this->transient_name = "github_$username";
-		$this->transient_time = 3 * 60 * 60;
-		$this->data = $this->cache_data();
+		if(function_exists('get_transient')) {
+			$this->transient_name = "github_$username";
+			$this->transient_time = 3 * 60 * 60;
+			$this->data = $this->cache_data();
+		}
+		else {
+			$this->data = $this->get_feed_data("https://api.github.com/users/{$this->username}/events");
+		}
 	}
 
 	/**
@@ -87,7 +92,13 @@ class GithubActivity {
 		if(in_array($item["type"], $special_output_events) == false) {
 			echo "<a href='https://github.com/{$item['repo']['name']}'>" . $item['repo']['name'] . "</a>";
 		}
-		echo " " . human_time_diff(strtotime($item["created_at"])) . " ago";
+
+		if(function_exists('human_time_diff')) {
+			echo " " . human_time_diff(strtotime($item["created_at"])) . " ago";
+		}
+		else {
+			echo " " . date('M jS g:i a', strtotime($item["created_at"]));
+		}
 		echo "</li>";
 		return ob_get_clean();
 	}
