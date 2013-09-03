@@ -108,7 +108,6 @@ class GithubActivity {
 			return false;
 		}
 
-		echo "<li>";
 		switch($item["type"]) {
 			case "WatchEvent":
 				echo "Watched ";
@@ -148,7 +147,7 @@ class GithubActivity {
 		else {
 			echo " " . date('M jS g:i a', strtotime($item["created_at"]));
 		}
-		echo "</li>";
+
 		return ob_get_clean();
 	}
 
@@ -170,12 +169,17 @@ class GithubActivity {
 				}
 				else {
 					$content = $this->format_item($this->data[$i]);
-					if($content == false) {
+					if($content == false || $content == "") {
 						continue;
 					}
 					else {
-						$number_of_items_returned++;
-						echo $content;
+						if($content !== "<li>") {
+							$number_of_items_returned++;
+							echo "<li>$content</li>";
+						}
+						else {
+							continue;
+						}
 					}
 				}
 			}
