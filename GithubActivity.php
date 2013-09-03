@@ -126,6 +126,9 @@ class GithubActivity {
 				echo "Followed <a href='" . $item['payload']['html_url'] . "'>" . $item['payload']['login'] . "</a>";
 				break;
 			case "CreateEvent":
+				if($item['payload']['ref'] == "master" && $item['payload']['ref_type'] == "branch") {
+					return false;
+				}
 				echo "Created ";
 				break;
 			case "IssueCommentEvent":
