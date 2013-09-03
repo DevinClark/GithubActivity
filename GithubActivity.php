@@ -1,14 +1,47 @@
 <?php
 
+
+/**
+ * GithubActivity
+ * @author  Devin Clark <dclarkdesign@gmail.com>
+ */
 class GithubActivity {
-	/** Instance Variables */
+	/**
+	 * The Github Username
+	 * @var String
+	 * @access private
+	 */
 	private $username;
+	/**
+	 * Number of items to show.
+	 * @var Integer
+	 * @access private
+	 */
 	private $numberOfItems;
+	/**
+	 * The data pulled from the API formatted as an associative array.
+	 * @var Array
+	 * @access private
+	 */
 	private $data;
+	/**
+	 * The Name of the transient. Defaults to github_$username.
+	 * @var String
+	 * @access private
+	 */
 	private $transient_name;
+	/**
+	 * The amount of time to keep the transient data cached.
+	 * @var Integer
+	 * @access  private
+	 */
 	private $transient_time;
 
-	/** Constructor(s) */
+	/**
+	 * Instantiates the class.
+	 * @param String $username The Github username
+	 * @param Integer $number   The number of posts to retrieve
+	 */
 	function __construct($username, $number) {
 		$this->username = $username;
 		$this->numberOfItems = $number;
@@ -40,7 +73,11 @@ class GithubActivity {
 		return json_decode($data, true);
 	}
 
-	/* Accessor & Mutator Method */
+	/**
+	 * Accessor/Mutator for $username
+	 * @param  String $val The value of username to set
+	 * @return String      The value of username if $val is not set.
+	 */
 	public function username($val = null) {
 		if($val !== null)
 			$username = $val;
@@ -48,6 +85,10 @@ class GithubActivity {
 			return $username;
 	}
 
+	/**
+	 * A function to cache the data retrieved from the API in WordPress
+	 * @return Array An associative array of the data.
+	 */
 	public function cache_data() {
 		if(false === ($output = get_transient($this->transient_name))) {
 			$output = $this->get_feed_data("https://api.github.com/users/{$this->username}/events");
@@ -56,12 +97,17 @@ class GithubActivity {
 		return $output;
 	}
 
+	/**
+	 * Formats the item passed as a list item.
+	 * @param  Array $item A single item of $data.
+	 * @return String|Boolean       The formatted string or false on error
+	 */
 	public function format_item($item) {
 		ob_start();
 		if($item == "") {
 			return false;
 		}
-		//echo "<pre>"; print_r($item); echo "</pre>";
+
 		echo "<li>";
 		switch($item["type"]) {
 			case "WatchEvent":
@@ -103,9 +149,12 @@ class GithubActivity {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Formats each item and returns it
+	 * @return string An unordered list of the formatted items.
+	 */
 	public function __toString() {
 		ob_start();
-		//echo "<pre>"; print_r($this->data[0]); echo "</pre>";
 		echo "<ul>";
 		if($this->data == null) {
 			echo "<li>No data... or the Github API is down... :(</li>";
