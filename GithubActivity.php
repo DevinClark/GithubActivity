@@ -89,7 +89,7 @@ class GithubActivity {
 	 * A function to cache the data retrieved from the API in WordPress
 	 * @return Array An associative array of the data.
 	 */
-	public function cache_data() {
+	private function cache_data() {
 		if(false === ($output = get_transient($this->transient_name))) {
 			$output = $this->get_feed_data("https://api.github.com/users/{$this->username}/events");
 			set_transient($this->transient_name, $output, $this->transient_time);
@@ -102,7 +102,7 @@ class GithubActivity {
 	 * @param  Array $item A single item of $data.
 	 * @return String|Boolean       The formatted string or false on error
 	 */
-	public function format_item($item) {
+	private function format_item($item) {
 		ob_start();
 		if($item == "") {
 			return false;
