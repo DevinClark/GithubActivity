@@ -164,7 +164,7 @@ class GithubActivity {
 		else {
 			$number_of_items_returned = 0;
 			for($i = 0; $i < count($this->data); $i++) {
-				if($number_of_items_returned >= ($this->numberOfItems - 1)) {
+				if($number_of_items_returned >= ($this->numberOfItems)) {
 					break;
 				}
 				else {
